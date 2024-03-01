@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
-import { OrganizationService } from './services';
-import { OrganizationController } from './controllers';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Organization, OrganizationSchema } from './schemas';
+import { ApplicantService, EndorserService, OrganizationService } from './services';
+import { ApplicantController, EndorserController, OrganizationController } from './controllers';
+import { Applicant, ApplicantSchema, Endorser, EndorserSchema, Organization, OrganizationSchema } from './schemas';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Organization.name, schema: OrganizationSchema },
+      { name: Endorser.name, schema: EndorserSchema },
+      { name: Applicant.name, schema: ApplicantSchema },
     ]),
   ],
-  controllers: [OrganizationController],
-  providers: [OrganizationService],
+  controllers: [OrganizationController, EndorserController, ApplicantController],
+  providers: [OrganizationService, EndorserService, ApplicantService],
 })
 export class ApplicantsModule {}

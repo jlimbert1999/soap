@@ -17,4 +17,8 @@ export class OrganizationService {
     const organizations = await this.organizationModel.find({}).sort({ _id: -1 });
     return { organizations };
   }
+
+  async searchAvailable(term: string) {
+    return await this.organizationModel.find({ name: new RegExp(term, 'i') }).limit(5);
+  }
 }

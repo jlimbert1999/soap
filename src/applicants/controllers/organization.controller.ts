@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { OrganizationService } from '../services';
 import { CreateOrganizationDto } from '../dtos';
 
@@ -14,5 +14,10 @@ export class OrganizationController {
   @Get()
   findAll() {
     return this.organizationService.findAll();
+  }
+
+  @Get('available/:term')
+  searchAvailable(@Param('term') term: string) {
+    return this.organizationService.searchAvailable(term);
   }
 }
