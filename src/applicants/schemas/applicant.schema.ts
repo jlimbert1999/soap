@@ -4,19 +4,19 @@ import { Endorser } from './endorser.schema';
 
 @Schema()
 export class Applicant extends Document {
-  @Prop({ required: true })
+  @Prop({})
   firstname: string;
 
-  @Prop({ required: true })
+  @Prop({})
   middlename: string;
 
-  @Prop({ required: true })
+  @Prop({})
   lastname: string;
 
-  @Prop({ required: true, unique: true })
+  @Prop({})
   dni: string;
 
-  @Prop({ required: true })
+  @Prop({})
   professional_profile: string;
 
   @Prop()

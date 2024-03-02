@@ -16,6 +16,12 @@ export class ApplicantController {
     return this.applicantService.update(id, data);
   }
 
+  @Post('upload')
+  upload(@Body() data: any) {
+    console.log(data);
+    return this.applicantService.uploadData(data);
+  }
+
   @Get()
   findAll() {
     return this.applicantService.findAll();

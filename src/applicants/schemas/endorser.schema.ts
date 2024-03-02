@@ -4,13 +4,12 @@ import { Organization } from './organization.schema';
 
 @Schema()
 export class Endorser extends Document {
-  @Prop({ required: true })
+  @Prop({ })
   name: string;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: Organization.name,
-    required: true,
   })
   organization: string;
 }
