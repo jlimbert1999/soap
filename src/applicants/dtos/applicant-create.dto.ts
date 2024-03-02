@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateApplicantDto {
   @IsString()
@@ -21,8 +21,7 @@ export class CreateApplicantDto {
   @IsNotEmpty()
   professional_profile: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   candidate_for: string;
 
   @IsString({ each: true })

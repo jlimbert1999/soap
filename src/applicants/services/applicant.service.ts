@@ -14,8 +14,17 @@ export class ApplicantService {
     return await createdApplicant.populate('endorsers');
   }
 
+  async update(id: string, applicant: any) {
+    return await this.endorsertModel.findByIdAndUpdate(id, applicant, { new: true }).populate('endorsers');
+  }
+
   async findAll() {
-    const applicants = await this.endorsertModel.find({}).populate('endorsers');
+    const applicants = await this.endorsertModel.find({}).populate('endorsers').sort({ _id: -1 });
     return { applicants };
   }
+
+  async searchByEndorser(id_endorser: string) {
+    return await this.endorsertModel.find({ endorsers: id_endorser });
+  }
+
 }
