@@ -10,15 +10,15 @@ export class CreateApplicantDto {
   middlename: string;
 
   @IsString()
-  @IsNotEmpty()
+  // @IsNotEmpty()
   lastname: string;
 
   @IsString()
-  @IsNotEmpty()
+  // @IsNotEmpty()
   dni: string;
 
   @IsString()
-  @IsNotEmpty()
+  // @IsNotEmpty()
   professional_profile: string;
 
   @IsOptional()

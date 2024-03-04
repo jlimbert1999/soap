@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { Job } from './job.schema';
+import { Endorser } from './endorser.schema';
 
 @Schema({ collection: 'funcionarios' })
 export class Officer extends Document {
@@ -25,28 +26,19 @@ export class Officer extends Document {
 
   @Prop({
     type: Number,
-    required: true,
   })
   telefono: number;
 
   @Prop({
     type: Number,
-    required: true,
-    unique: true,
   })
   dni: number;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: Job.name,
+    ref: 'cargos',
   })
   cargo?: Job;
-
-  @Prop({
-    type: String,
-  })
-  //   ! DELETE AFTER UPDATE
-  oldcargo: string;
 
   @Prop({
     type: Boolean,
@@ -55,15 +47,12 @@ export class Officer extends Document {
   activo: boolean;
 
   @Prop({
-    type: Boolean,
-    // default: false,
-  })
-  cuenta: boolean;
-
-  @Prop({
     type: String,
   })
   imgUrl?: string;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Endorser.name }] })
+  endorsers: string[];
 }
 
 export const OfficerSchema = SchemaFactory.createForClass(Officer);

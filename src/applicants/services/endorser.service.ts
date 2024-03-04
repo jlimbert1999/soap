@@ -9,7 +9,7 @@ export class EndorserService {
   constructor(@InjectModel(Endorser.name) private endorsertModel: Model<Endorser>) {}
 
   async findAll() {
-    const data = await this.endorsertModel.find({}).populate('organization');
+    const data = await this.endorsertModel.find({}).populate('organization').sort({ _id: -1 });
     return { endorsers: data };
   }
 

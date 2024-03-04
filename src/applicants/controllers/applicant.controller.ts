@@ -18,13 +18,22 @@ export class ApplicantController {
 
   @Post('upload')
   upload(@Body() data: any) {
-    console.log(data);
     return this.applicantService.uploadData(data);
+  }
+
+  @Post('accept/:id')
+  acept(@Body() data: any, @Param('id') id: string) {
+    return this.applicantService.acept(id, data);
   }
 
   @Get()
   findAll() {
     return this.applicantService.findAll();
+  }
+
+  @Get('jobs/:term')
+  searchJobs(@Param('term') term: string) {
+    return this.applicantService.searchAvailableJob(term);
   }
 
   @Get('endorser/:id')
