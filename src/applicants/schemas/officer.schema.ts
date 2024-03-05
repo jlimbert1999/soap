@@ -1,58 +1,65 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { Job } from './job.schema';
-import { Endorser } from './endorser.schema';
 
-@Schema({ collection: 'funcionarios' })
+@Schema({ collection: 'employeeds' })
 export class Officer extends Document {
   @Prop({
     type: String,
-    required: true,
-    uppercase: true,
   })
-  nombre: string;
+  name: string;
 
   @Prop({
     type: String,
-    uppercase: true,
   })
-  paterno: string;
+  surname_pa: string;
 
   @Prop({
     type: String,
-    uppercase: true,
   })
-  materno: string;
+  surname_ma: string;
 
   @Prop({
     type: Number,
   })
-  telefono: number;
+  ci: string;
+
+  @Prop({
+    type: Date,
+  })
+  date_nac: Date;
+
+  @Prop({
+    type: String,
+  })
+  title: string;
+
+  @Prop({
+    type: String,
+  })
+  email: string;
 
   @Prop({
     type: Number,
   })
-  dni: number;
+  phone: string;
+
+  @Prop({
+    type: String,
+  })
+  address: string;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'cargos',
+    ref: 'Users',
+    default: '5e7b46399f3a2a02e49d16e9',
   })
-  cargo?: Job;
+  id_user: string;
 
-  @Prop({
-    type: Boolean,
-    default: true,
-  })
-  activo: boolean;
+  @Prop({ type: Boolean, default: true })
+  status: boolean;
 
-  @Prop({
-    type: String,
-  })
-  imgUrl?: string;
-
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Endorser.name }] })
-  endorsers: string[];
+  @Prop({ type: Date, default: Date.now })
+  createdAt: Date;
 }
 
 export const OfficerSchema = SchemaFactory.createForClass(Officer);

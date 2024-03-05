@@ -4,7 +4,7 @@ import { Organization } from './organization.schema';
 
 @Schema()
 export class Endorser extends Document {
-  @Prop({ })
+  @Prop({ type: String, required: true, uppercase: true })
   name: string;
 
   @Prop({

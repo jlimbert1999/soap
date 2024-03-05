@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApplicantDocuments } from '../interfaces';
 
 export class CreateApplicantDto {
   @IsString()
@@ -26,4 +27,9 @@ export class CreateApplicantDto {
 
   @IsString({ each: true })
   endorsers: string[];
+
+  @IsOptional()
+  @IsArray()
+  @IsIn(Object.values(ApplicantDocuments), { each: true })
+  documents: string[];
 }

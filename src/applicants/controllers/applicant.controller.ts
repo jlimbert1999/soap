@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { CreateApplicantDto } from '../dtos';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { CreateApplicantDto, UpdateOfficer } from '../dtos';
 import { ApplicantService } from '../services';
+import { PaginationParamsDto } from 'src/common/dtos';
 
 @Controller('applicants')
 export class ApplicantController {
@@ -21,14 +22,29 @@ export class ApplicantController {
     return this.applicantService.uploadData(data);
   }
 
+  @Put('approve/:id')
+  approve(@Param('id') id: string) {
+    return this.applicantService.approve(id);
+  }
+
   @Post('accept/:id')
   acept(@Body() data: any, @Param('id') id: string) {
     return this.applicantService.acept(id, data);
   }
 
   @Get()
-  findAll() {
-    return this.applicantService.findAll();
+  findAll(@Query() params: PaginationParamsDto) {
+    return this.applicantService.findAll(params);
+  }
+
+  @Get('approved')
+  getApproved(@Query() params: PaginationParamsDto) {
+    return this.applicantService.getApproved(params);
+  }
+
+  @Get('search/:term')
+  searc(@Param('term') term: string, @Query() params: PaginationParamsDto) {
+    return this.applicantService.search(term, params);
   }
 
   @Get('jobs/:term')
@@ -39,5 +55,10 @@ export class ApplicantController {
   @Get('endorser/:id')
   searchByEndorser(@Param('id') id_endorser: string) {
     return this.applicantService.searchByEndorser(id_endorser);
+  }
+
+  @Put('officer/:id')
+  updateOfficers(@Param('id') id: string, @Body() body: UpdateOfficer) {
+    return this.applicantService.updateOfficer(id, body);
   }
 }

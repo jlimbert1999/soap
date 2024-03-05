@@ -1,56 +1,42 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 
-@Schema({ collection: 'cargos' })
+@Schema({ collection: 'charges' })
 export class Job extends Document {
-  @Prop({
-    type: String,
-    required: true,
-    uppercase: true,
-  })
-  nombre: string;
+  @Prop({ type: String })
+  name: string;
+
+  @Prop({ type: Number })
+  register: number;
+
+  @Prop({ type: String, enum: ['ITEM', 'CONTRATO', 'EVENTUAL'] })
+  type: 'ITEM' | 'CONTRATO' | 'EVENTUAL';
+
+  @Prop({ type: String })
+  sigla: string;
+
+  @Prop({ type: String })
+  organization: string;
 
   @Prop({
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Levels',
   })
-  denominacion: string;
+  id_nivel: any;
+
+  @Prop({ type: String })
+  contract: string;
 
   @Prop({
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Contracts',
   })
-  tipoContrato: string;
+  id_contract: any;
 
   @Prop({
-    type: Number,
+    type: Boolean,
+    default: true,
   })
-  duracion_contrato: number;
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'niveles', default: null })
-  nivel_id: string;
-
-  @Prop({
-    type: String,
-  })
-  estado: string;
-
-  @Prop({
-    type: String,
-  })
-  secretaria: string;
-  @Prop({
-    type: String,
-  })
-  jefatura: string;
-
-  @Prop({
-    type: String,
-  })
-  direccion: string;
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'cargos', default: null })
-  superior?: Job;
-
-  @Prop({ type: Boolean, default: false })
-  isRoot: boolean;
+  status: boolean;
 }
 export const JobSchema = SchemaFactory.createForClass(Job);
