@@ -1,11 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
+import { Applicant, Endorser, Organization, Job, Employed, Officer } from '../schemas';
 import { CreateApplicantDto, CreateOfficer, UpdateOfficer } from '../dtos';
-import { Applicant, Endorser, Organization } from '../schemas';
-import { Officer } from '../schemas/officer.schema';
-import { Job } from '../schemas/job.schema';
-import { Employed } from '../schemas/employed.schema';
 import { PaginationParamsDto } from 'src/common/dtos';
 import { ApplicantStatus } from '../interfaces';
 
@@ -23,83 +20,71 @@ interface ExcelData {
 @Injectable()
 export class ApplicantService {
   constructor(
-    @InjectModel(Applicant.name) private endorsertModel: Model<Applicant>,
-    @InjectModel(Endorser.name) private avalModel: Model<Endorser>,
+    @InjectModel(Applicant.name) private applicantModel: Model<Applicant>,
+    @InjectModel(Endorser.name) private endorserModel: Model<Endorser>,
     @InjectModel(Organization.name) private organizationModel: Model<Organization>,
+
     @InjectModel(Officer.name) private officerModel: Model<Officer>,
     @InjectModel(Job.name) private jobmodel: Model<Job>,
     @InjectModel(Employed.name) private employedModel: Model<Employed>,
     @InjectConnection() private connection: mongoose.Connection,
   ) {}
 
-  async findAll({ limit, offset }: PaginationParamsDto) {
+  async findAll(status: ApplicantStatus, { limit, offset }: PaginationParamsDto) {
     const [applicants, length] = await Promise.all([
-      this.endorsertModel
-        .find({ status: ApplicantStatus.PENDING })
-        .populate('endorsers')
-        .sort({ _id: -1 })
-        .limit(limit)
-        .skip(offset),
-      this.endorsertModel.countDocuments({}),
+      this.applicantModel.find({ status: status }).populate('endorsers').sort({ _id: -1 }).limit(limit).skip(offset),
+      this.applicantModel.countDocuments({ status: status }),
     ]);
     return { applicants, length };
   }
 
-  async getApproved({ limit, offset }: PaginationParamsDto) {
-    const [applicants, length] = await Promise.all([
-      this.endorsertModel
-        .find({ status: ApplicantStatus.ACCEPTED })
-        .populate('endorsers')
-        .sort({ _id: -1 })
-        .limit(limit)
-        .skip(offset),
-      this.endorsertModel.countDocuments({ status: ApplicantStatus.ACCEPTED }),
-    ]);
-    return { applicants, length };
-  }
-
-  async search(text: string, { limit, offset }: PaginationParamsDto) {
+  async search(status: ApplicantStatus, text: string, { limit, offset }: PaginationParamsDto) {
     const term = new RegExp(text, 'i');
-    const query: mongoose.FilterQuery<Applicant> = {
-      $or: [{ firstname: term }, { middlename: term }, { lastname: term }, { dni: term }],
-    };
-    const [applicants, length] = await Promise.all([
-      this.endorsertModel.find(query).populate('endorsers').sort({ _id: -1 }).limit(limit).skip(offset),
-      this.endorsertModel.countDocuments(query),
-    ]);
+    const data = await this.applicantModel
+      .aggregate()
+      .match({ status: status })
+      .addFields({
+        fullname: {
+          $concat: ['$firstname', ' ', '$middlename', ' ', '$lastname'],
+        },
+      })
+      .match({ $or: [{ fullname: term }, { dni: term }] })
+      .project({ fullname: 0 })
+      .facet({
+        paginatedResults: [{ $skip: offset }, { $limit: limit }],
+        totalCount: [{ $count: 'count' }],
+      });
+    const applicants = data[0].paginatedResults;
+    await this.applicantModel.populate(applicants, 'endorsers');
+    const length = data[0].totalCount[0] ? data[0].totalCount[0].count : 0;
     return { applicants, length };
   }
 
   async create(applicant: CreateApplicantDto) {
-    const model = new this.endorsertModel(applicant);
+    const model = new this.applicantModel(applicant);
     const createdApplicant = await model.save();
     return await createdApplicant.populate('endorsers');
   }
 
   async update(id: string, applicant: any) {
-    return await this.endorsertModel.findByIdAndUpdate(id, applicant, { new: true }).populate('endorsers');
+    return await this.applicantModel.findByIdAndUpdate(id, applicant, { new: true }).populate('endorsers');
   }
 
   async updateOfficer(id_applicant: string, data: UpdateOfficer) {
-    return await this.endorsertModel
+    return await this.applicantModel
       .findByIdAndUpdate(id_applicant, { documents: data.documents }, { new: true })
       .populate('endorsers');
   }
 
   async searchByEndorser(id_endorser: string) {
-    return await this.endorsertModel.find({ endorsers: id_endorser });
-  }
-
-  async approve(id: string) {
-    await this.endorsertModel.updateOne({ _id: id }, { status: ApplicantStatus.ACCEPTED });
-    return { message: 'Postulante aprobado' };
+    return await this.applicantModel.find({ endorsers: id_endorser });
   }
 
   async acept(id_applicant: string, applicant: CreateOfficer) {
     const session = await this.connection.startSession();
     try {
       session.startTransaction();
-      const applicantDB = await this.endorsertModel.findByIdAndDelete(id_applicant, { session });
+      const applicantDB = await this.applicantModel.findByIdAndDelete(id_applicant, { session });
       const officer = new this.officerModel({
         name: applicantDB.firstname,
         surname_pa: applicantDB.middlename,
@@ -116,7 +101,7 @@ export class ApplicantService {
       });
       await employed.save({ session });
       await session.commitTransaction();
-      return;
+      return true;
     } catch (error) {
       await session.abortTransaction();
       throw new InternalServerErrorException('Error al registrar el tramite externo');
@@ -154,10 +139,19 @@ export class ApplicantService {
       },
     ]);
   }
+  async toggleAproved(id_applicant: string) {
+    const applicantDB = await this.applicantModel.findById(id_applicant);
+    if (!applicantDB) throw new BadRequestException(`applicant ${id_applicant} dont exist`);
+    if (applicantDB.status === ApplicantStatus.ACCEPTED) {
+      await this.applicantModel.updateOne({ _id: id_applicant }, { documents: [], status: ApplicantStatus.PENDING });
+    } else {
+      await this.applicantModel.updateOne({ _id: id_applicant }, { status: ApplicantStatus.ACCEPTED });
+    }
+  }
 
   async uploadData(data: ExcelData[]) {
     for (const element of data) {
-      const newApplincat = new this.endorsertModel({
+      const newApplincat = new this.applicantModel({
         firstname: element.NOMBRE,
         middlename: element['APELLIDO PATERNO'],
         lastname: element['APELLIDO MATERNO'],
@@ -167,9 +161,9 @@ export class ApplicantService {
         endorsers: [],
       });
       if (element['AVAL 1'] && element['AVAL 1'] != '') {
-        const existAval = await this.avalModel.findOne({ name: element['AVAL 1'].toUpperCase() });
+        const existAval = await this.endorserModel.findOne({ name: element['AVAL 1'].toUpperCase() });
         if (!existAval) {
-          const newAval = new this.avalModel({ name: element['AVAL 1'] });
+          const newAval = new this.endorserModel({ name: element['AVAL 1'] });
           if (element['ORGANIZACIÓN SOCIAL'] !== '' && element['ORGANIZACIÓN SOCIAL']) {
             const existOrg = await this.organizationModel.findOne({
               name: element['ORGANIZACIÓN SOCIAL'].toUpperCase(),
@@ -190,7 +184,8 @@ export class ApplicantService {
       }
       await newApplincat.save();
     }
-    console.log('do');
     return { ok: true };
   }
+
+  
 }

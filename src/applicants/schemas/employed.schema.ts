@@ -30,7 +30,7 @@ export class Employed extends Document {
   @Prop({ type: Date })
   createdAt: Date;
 
-  @Prop({ type: Boolean })
+  @Prop({ type: Boolean, default: true })
   status: boolean;
 }
 export const EmployedSchema = SchemaFactory.createForClass(Employed);

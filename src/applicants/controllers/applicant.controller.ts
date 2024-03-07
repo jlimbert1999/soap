@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateApplicantDto, UpdateOfficer } from '../dtos';
 import { ApplicantService } from '../services';
 import { PaginationParamsDto } from 'src/common/dtos';
+import { ApplicantStatus } from '../interfaces';
 
 @Controller('applicants')
 export class ApplicantController {
@@ -23,8 +24,8 @@ export class ApplicantController {
   }
 
   @Put('approve/:id')
-  approve(@Param('id') id: string) {
-    return this.applicantService.approve(id);
+  toggleAproved(@Param('id') id: string) {
+    return this.applicantService.toggleAproved(id);
   }
 
   @Post('accept/:id')
@@ -32,19 +33,14 @@ export class ApplicantController {
     return this.applicantService.acept(id, data);
   }
 
-  @Get()
-  findAll(@Query() params: PaginationParamsDto) {
-    return this.applicantService.findAll(params);
+  @Get(':status')
+  findAll(@Param('status') status: ApplicantStatus, @Query() params: PaginationParamsDto) {
+    return this.applicantService.findAll(status, params);
   }
 
-  @Get('approved')
-  getApproved(@Query() params: PaginationParamsDto) {
-    return this.applicantService.getApproved(params);
-  }
-
-  @Get('search/:term')
-  searc(@Param('term') term: string, @Query() params: PaginationParamsDto) {
-    return this.applicantService.search(term, params);
+  @Get('search/:status/:term')
+  search(@Param('status') status: ApplicantStatus, @Param('term') term: string, @Query() params: PaginationParamsDto) {
+    return this.applicantService.search(status, term, params);
   }
 
   @Get('jobs/:term')
