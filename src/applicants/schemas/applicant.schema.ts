@@ -18,6 +18,9 @@ export class Applicant extends Document {
   dni: string;
 
   @Prop({})
+  phone: string;
+
+  @Prop({})
   professional_profile: string;
 
   @Prop()
