@@ -1,6 +1,10 @@
-import { IsMongoId } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateOfficer {
   @IsMongoId()
   id_job: string;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 }

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { CreateApplicantDto, UpdateOfficer } from '../dtos';
+import { CreateApplicantDto, CreateOfficer, UpdateApplicantDto, UpdateOfficer } from '../dtos';
 import { ApplicantService } from '../services';
 import { PaginationParamsDto } from 'src/common/dtos';
 import { ApplicantStatus } from '../interfaces';
@@ -14,7 +14,7 @@ export class ApplicantController {
   }
 
   @Put('/:id')
-  update(@Param('id') id: string, @Body() data: CreateApplicantDto) {
+  update(@Param('id') id: string, @Body() data: UpdateApplicantDto) {
     return this.applicantService.update(id, data);
   }
 
@@ -29,8 +29,8 @@ export class ApplicantController {
   }
 
   @Post('accept/:id')
-  acept(@Body() data: any, @Param('id') id: string) {
-    return this.applicantService.acept(id, data);
+  acept(@Body() data: CreateOfficer, @Param('id') id: string) {
+    return this.applicantService.accept(id, data);
   }
 
   @Get(':status')
@@ -51,6 +51,11 @@ export class ApplicantController {
   @Get('endorser/:id')
   searchByEndorser(@Param('id') id_endorser: string) {
     return this.applicantService.searchByEndorser(id_endorser);
+  }
+
+  @Get('completed/:date')
+  getCompleted(@Param('date') date: string, @Query() param: PaginationParamsDto) {
+    return this.applicantService.getCompleted(param.limit, param.offset, +date);
   }
 
   @Put('officer/:id')

@@ -19,6 +19,6 @@ export class EndorserService {
   }
 
   async searchAvailable(term: string) {
-    return await this.endorsertModel.find({ name: new RegExp(term, 'i') }).limit(10);
+    return await this.endorsertModel.find({ name: new RegExp(term, 'i') }).limit(5);
   }
 }

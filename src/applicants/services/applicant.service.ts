@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import mongoose, { FilterQuery, Model } from 'mongoose';
 import { Applicant, Endorser, Organization, Job, Employed, Officer } from '../schemas';
-import { CreateApplicantDto, CreateOfficer, UpdateOfficer } from '../dtos';
+import { CreateApplicantDto, CreateOfficer, UpdateApplicantDto, UpdateOfficer } from '../dtos';
 import { PaginationParamsDto } from 'src/common/dtos';
 import { ApplicantStatus } from '../interfaces';
 
@@ -61,12 +61,20 @@ export class ApplicantService {
   }
 
   async create(applicant: CreateApplicantDto) {
+    const applicantDB = await this.applicantModel.findOne({ dni: applicant.dni });
+    if (applicantDB) throw new BadRequestException(`El CI: ${applicant.dni} ya existe`);
     const model = new this.applicantModel(applicant);
     const createdApplicant = await model.save();
     return await createdApplicant.populate('endorsers');
   }
 
-  async update(id: string, applicant: any) {
+  async update(id: string, applicant: UpdateApplicantDto) {
+    const applicantDB = await this.applicantModel.findById(id);
+    if (!applicantDB) throw new BadRequestException('El postulante no existe');
+    if (applicant.dni !== applicantDB.dni) {
+      const duplicate = await this.applicantModel.findOne({ dni: applicant.dni });
+      if (duplicate) throw new BadRequestException(`El CI: ${applicant.dni} ya existe`);
+    }
     return await this.applicantModel.findByIdAndUpdate(id, applicant, { new: true }).populate('endorsers');
   }
 
@@ -80,11 +88,15 @@ export class ApplicantService {
     return await this.applicantModel.find({ endorsers: id_endorser });
   }
 
-  async acept(id_applicant: string, applicant: CreateOfficer) {
+  async accept(id_applicant: string, data: CreateOfficer) {
     const session = await this.connection.startSession();
     try {
       session.startTransaction();
-      const applicantDB = await this.applicantModel.findByIdAndDelete(id_applicant, { session });
+      const applicantDB = await this.applicantModel.findByIdAndUpdate(
+        id_applicant,
+        { candidate_for: data.name, status: ApplicantStatus.COMPLETED, date: new Date() },
+        { session },
+      );
       const officer = new this.officerModel({
         name: applicantDB.firstname,
         surname_pa: applicantDB.middlename,
@@ -95,7 +107,7 @@ export class ApplicantService {
       const { _id } = await officer.save({ session });
       const employed = new this.employedModel({
         id_employee: _id,
-        id_charge: applicant.id_job,
+        id_charge: data.id_job,
         id_representantive: applicantDB.endorsers.map((el) => el._id),
         date_time: new Date(),
       });
@@ -104,7 +116,7 @@ export class ApplicantService {
       return true;
     } catch (error) {
       await session.abortTransaction();
-      throw new InternalServerErrorException('Error al registrar el tramite externo');
+      throw new InternalServerErrorException('Error al crear funcionario');
     } finally {
       session.endSession();
     }
@@ -139,6 +151,23 @@ export class ApplicantService {
       },
     ]);
   }
+
+  async getCompleted(limit: number, offset: number, date: number) {
+    const inDate = new Date(date);
+    const query: FilterQuery<Applicant> = {
+      status: ApplicantStatus.COMPLETED,
+      date: {
+        $gte: new Date(inDate.getFullYear(), inDate.getMonth(), inDate.getDate()),
+        $lt: new Date(inDate.getFullYear(), inDate.getMonth(), inDate.getDate() + 1),
+      },
+    };
+    const [applicants, length] = await Promise.all([
+      this.applicantModel.find(query).populate('endorsers').sort({ _id: -1 }).limit(limit).skip(offset),
+      this.applicantModel.countDocuments(query),
+    ]);
+    return { applicants, length };
+  }
+
   async toggleAproved(id_applicant: string) {
     const applicantDB = await this.applicantModel.findById(id_applicant);
     if (!applicantDB) throw new BadRequestException(`applicant ${id_applicant} dont exist`);
@@ -186,6 +215,4 @@ export class ApplicantService {
     }
     return { ok: true };
   }
-
-  
 }

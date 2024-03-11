@@ -17,11 +17,14 @@ export class Applicant extends Document {
   @Prop({})
   dni: string;
 
-  @Prop({})
+  @Prop({ type: String })
   phone: string;
 
   @Prop({})
   professional_profile: string;
+
+  @Prop({ type: Date })
+  date: Date;
 
   @Prop()
   candidate_for: string;
