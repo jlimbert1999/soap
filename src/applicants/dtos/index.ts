@@ -5,3 +5,5 @@ export * from './officers/officer-update.dto';
 
 export * from './applicant-create.dto';
 export * from './applicant-update.dto';
+
+export * from './params/get-applicants.dto';

@@ -4,3 +4,4 @@ export * from './applicant.schema';
 export * from './employed.schema';
 export * from './job.schema';
 export * from './officer.schema';
+export * from './level.schema';

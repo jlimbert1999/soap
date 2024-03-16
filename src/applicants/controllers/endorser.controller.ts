@@ -13,7 +13,6 @@ export class EndorserController {
 
   @Post()
   create(@Body() organization: CreateEndorserDto) {
-    console.log(organization);
     return this.endorserService.create(organization);
   }
 

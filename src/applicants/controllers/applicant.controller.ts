@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { CreateApplicantDto, CreateOfficer, UpdateApplicantDto, UpdateOfficer } from '../dtos';
+import { CreateApplicantDto, CreateOfficer, GetAplicantParamsDto, UpdateApplicantDto, UpdateOfficer } from '../dtos';
 import { ApplicantService } from '../services';
 import { PaginationParamsDto } from 'src/common/dtos';
-import { ApplicantStatus } from '../interfaces';
 
 @Controller('applicants')
 export class ApplicantController {
@@ -33,14 +32,14 @@ export class ApplicantController {
     return this.applicantService.accept(id, data);
   }
 
-  @Get(':status')
-  findAll(@Param('status') status: ApplicantStatus, @Query() params: PaginationParamsDto) {
-    return this.applicantService.findAll(status, params);
+  @Get()
+  findAll(@Query() params: GetAplicantParamsDto) {
+    return this.applicantService.findAll(params);
   }
 
-  @Get('search/:status/:term')
-  search(@Param('status') status: ApplicantStatus, @Param('term') term: string, @Query() params: PaginationParamsDto) {
-    return this.applicantService.search(status, term, params);
+  @Get('search/:term')
+  search(@Param('term') term: string, @Query() params: GetAplicantParamsDto) {
+    return this.applicantService.search(term, params);
   }
 
   @Get('jobs/:term')
