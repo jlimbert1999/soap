@@ -75,7 +75,8 @@ export class OfficerService {
     return { officers, length };
   }
 
-  async upload() {
+  async upload(data: any[]) {
+    console.log(data);
     // for (const element of data) {
     //   const level = await this.levelModel.findOne({ nivel: element.Nivel });
     //   if (!level) throw new BadGatewayException('Nivel desconocido');
