@@ -24,4 +24,9 @@ export class OfficerController {
   upload(@Body() data: any) {
     return this.officerService.upload(data);
   }
+
+  @Get('endorsers/:id')
+  searchByEndorser(@Param('id') id: string) {
+    return this.officerService.searchByEndorser(id);
+  }
 }

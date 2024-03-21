@@ -32,6 +32,9 @@ let OfficerController = class OfficerController {
     upload(data) {
         return this.officerService.upload(data);
     }
+    searchByEndorser(id) {
+        return this.officerService.searchByEndorser(id);
+    }
 };
 exports.OfficerController = OfficerController;
 __decorate([
@@ -64,6 +67,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], OfficerController.prototype, "upload", null);
+__decorate([
+    (0, common_1.Get)('endorsers/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], OfficerController.prototype, "searchByEndorser", null);
 exports.OfficerController = OfficerController = __decorate([
     (0, common_1.Controller)('officers'),
     __metadata("design:paramtypes", [services_1.OfficerService])

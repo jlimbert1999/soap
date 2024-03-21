@@ -44,4 +44,7 @@ export declare class OfficerController {
     upload(data: any): Promise<{
         ok: boolean;
     }>;
+    searchByEndorser(id: string): Promise<Omit<import("mongoose").Document<unknown, {}, import("../schemas").Officer> & import("../schemas").Officer & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>[]>;
 }

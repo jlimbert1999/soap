@@ -41,6 +41,9 @@ export declare class OfficerService {
     }): Promise<import("mongoose").Document<unknown, {}, Officer> & Officer & {
         _id: import("mongoose").Types.ObjectId;
     }>;
+    searchByEndorser(id_endorser: string): Promise<Omit<import("mongoose").Document<unknown, {}, Officer> & Officer & {
+        _id: import("mongoose").Types.ObjectId;
+    }, never>[]>;
     search(text: string, { limit, offset }: PaginationParamsDto): Promise<{
         officers: any;
         length: any;

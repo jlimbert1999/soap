@@ -51,6 +51,10 @@ export class OfficerService {
       .populate({ path: 'cargo', populate: { path: 'nivel_id' } });
   }
 
+  async searchByEndorser(id_endorser: string) {
+    return await this.officerModel.find({ id_representantive: id_endorser }).populate('cargo');
+  }
+
   async search(text: string, { limit, offset }: PaginationParamsDto) {
     const term = new RegExp(text, 'i');
     const data = await this.officerModel

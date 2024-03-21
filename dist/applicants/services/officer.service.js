@@ -42,6 +42,9 @@ let OfficerService = class OfficerService {
             .populate('id_representantive')
             .populate({ path: 'cargo', populate: { path: 'nivel_id' } });
     }
+    async searchByEndorser(id_endorser) {
+        return await this.officerModel.find({ id_representantive: id_endorser }).populate('cargo');
+    }
     async search(text, { limit, offset }) {
         const term = new RegExp(text, 'i');
         const data = await this.officerModel
