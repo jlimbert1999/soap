@@ -23,9 +23,10 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import mongoose, { Document } from 'mongoose';
+import { Organization } from './organization.schema';
 export declare class Endorser extends Document {
     name: string;
-    organization: string;
+    organization: Organization;
 }
 export declare const EndorserSchema: mongoose.Schema<Endorser, mongoose.Model<Endorser, any, any, any, mongoose.Document<unknown, any, Endorser> & Endorser & {
     _id: mongoose.Types.ObjectId;

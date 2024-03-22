@@ -25,13 +25,17 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { CreateEndorserDto } from '../dtos/endorser-create.dto';
 import { EndorserService } from '../services';
+import { PaginationParamsDto } from 'src/common/dtos';
 export declare class EndorserController {
     private endorserService;
     constructor(endorserService: EndorserService);
-    findAll(): Promise<{
-        endorsers: Omit<import("mongoose").Document<unknown, {}, import("../schemas").Endorser> & import("../schemas").Endorser & {
-            _id: import("mongoose").Types.ObjectId;
-        }, never>[];
+    findAll(params: PaginationParamsDto): Promise<{
+        endorsers: any;
+        length: any;
+    }>;
+    search(term: string, params: PaginationParamsDto): Promise<{
+        endorsers: any;
+        length: any;
     }>;
     create(organization: CreateEndorserDto): Promise<Omit<import("mongoose").Document<unknown, {}, import("../schemas").Endorser> & import("../schemas").Endorser & {
         _id: import("mongoose").Types.ObjectId;

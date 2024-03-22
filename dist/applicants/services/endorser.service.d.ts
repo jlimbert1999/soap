@@ -23,15 +23,21 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import { Model } from 'mongoose';
-import { Endorser } from '../schemas';
+import { Applicant, Endorser, Officer } from '../schemas';
 import { CreateEndorserDto } from '../dtos/endorser-create.dto';
+import { PaginationParamsDto } from 'src/common/dtos';
 export declare class EndorserService {
     private endorsertModel;
-    constructor(endorsertModel: Model<Endorser>);
-    findAll(): Promise<{
-        endorsers: Omit<import("mongoose").Document<unknown, {}, Endorser> & Endorser & {
-            _id: import("mongoose").Types.ObjectId;
-        }, never>[];
+    private applicantModel;
+    private officerModel;
+    constructor(endorsertModel: Model<Endorser>, applicantModel: Model<Applicant>, officerModel: Model<Officer>);
+    findAll({ limit, offset }: PaginationParamsDto): Promise<{
+        endorsers: any;
+        length: any;
+    }>;
+    search(term: string, { limit, offset }: PaginationParamsDto): Promise<{
+        endorsers: any;
+        length: any;
     }>;
     create(organization: CreateEndorserDto): Promise<Omit<import("mongoose").Document<unknown, {}, Endorser> & Endorser & {
         _id: import("mongoose").Types.ObjectId;

@@ -25,7 +25,7 @@ __decorate([
         type: mongoose_2.default.Schema.Types.ObjectId,
         ref: organization_schema_1.Organization.name,
     }),
-    __metadata("design:type", String)
+    __metadata("design:type", organization_schema_1.Organization)
 ], Endorser.prototype, "organization", void 0);
 exports.Endorser = Endorser = __decorate([
     (0, mongoose_1.Schema)()

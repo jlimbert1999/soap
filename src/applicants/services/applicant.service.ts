@@ -228,27 +228,27 @@ export class ApplicantService {
   // }
 
   async uploadData(data: ExcelData[]) {
-    for (const element of data) {
-      if (element['AVAL 1'] && element['AVAL 1'] != '') {
-        const existAval = await this.endorserModel.findOne({ name: element['AVAL 1'].toUpperCase() });
-        if (!existAval) {
-          const newAval = new this.endorserModel({ name: element['AVAL 1'] });
-          if (element['ORGANIZACIÓN SOCIAL'] !== '' && element['ORGANIZACIÓN SOCIAL']) {
-            const existOrg = await this.organizationModel.findOne({
-              name: element['ORGANIZACIÓN SOCIAL'].toUpperCase(),
-            });
-            if (!existOrg) {
-              const newOrg = new this.organizationModel({ name: element['ORGANIZACIÓN SOCIAL'] });
-              await newOrg.save();
-              newAval.organization = newOrg._id;
-            } else {
-              newAval.organization = existOrg._id;
-            }
-          }
-          await newAval.save();
-        }
-      }
-    }
+    // for (const element of data) {
+    //   if (element['AVAL 1'] && element['AVAL 1'] != '') {
+    //     const existAval = await this.endorserModel.findOne({ name: element['AVAL 1'].toUpperCase() });
+    //     if (!existAval) {
+    //       const newAval = new this.endorserModel({ name: element['AVAL 1'] });
+    //       if (element['ORGANIZACIÓN SOCIAL'] !== '' && element['ORGANIZACIÓN SOCIAL']) {
+    //         const existOrg = await this.organizationModel.findOne({
+    //           name: element['ORGANIZACIÓN SOCIAL'].toUpperCase(),
+    //         });
+    //         if (!existOrg) {
+    //           const newOrg = new this.organizationModel({ name: element['ORGANIZACIÓN SOCIAL'] });
+    //           await newOrg.save();
+    //           newAval.organization = newOrg._id;
+    //         } else {
+    //           newAval.organization = existOrg._id;
+    //         }
+    //       }
+    //       await newAval.save();
+    //     }
+    //   }
+    // }
     console.log(data);
     return { ok: true };
   }

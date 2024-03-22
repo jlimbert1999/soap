@@ -18,15 +18,15 @@ let Applicant = class Applicant extends mongoose_2.Document {
 };
 exports.Applicant = Applicant;
 __decorate([
-    (0, mongoose_1.Prop)({}),
+    (0, mongoose_1.Prop)({ type: String, uppercase: true }),
     __metadata("design:type", String)
 ], Applicant.prototype, "firstname", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({}),
+    (0, mongoose_1.Prop)({ type: String, uppercase: true }),
     __metadata("design:type", String)
 ], Applicant.prototype, "middlename", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({}),
+    (0, mongoose_1.Prop)({ type: String, uppercase: true }),
     __metadata("design:type", String)
 ], Applicant.prototype, "lastname", void 0);
 __decorate([

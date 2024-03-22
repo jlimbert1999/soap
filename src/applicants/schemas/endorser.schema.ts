@@ -11,6 +11,6 @@ export class Endorser extends Document {
     type: mongoose.Schema.Types.ObjectId,
     ref: Organization.name,
   })
-  organization: string;
+  organization: Organization;
 }
 export const EndorserSchema = SchemaFactory.createForClass(Endorser);

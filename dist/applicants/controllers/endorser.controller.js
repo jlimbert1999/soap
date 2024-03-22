@@ -16,12 +16,16 @@ exports.EndorserController = void 0;
 const common_1 = require("@nestjs/common");
 const endorser_create_dto_1 = require("../dtos/endorser-create.dto");
 const services_1 = require("../services");
+const dtos_1 = require("../../common/dtos");
 let EndorserController = class EndorserController {
     constructor(endorserService) {
         this.endorserService = endorserService;
     }
-    findAll() {
-        return this.endorserService.findAll();
+    findAll(params) {
+        return this.endorserService.findAll(params);
+    }
+    search(term, params) {
+        return this.endorserService.search(term, params);
     }
     create(organization) {
         return this.endorserService.create(organization);
@@ -33,10 +37,19 @@ let EndorserController = class EndorserController {
 exports.EndorserController = EndorserController;
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [dtos_1.PaginationParamsDto]),
     __metadata("design:returntype", void 0)
 ], EndorserController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('search/:term'),
+    __param(0, (0, common_1.Param)('term')),
+    __param(1, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, dtos_1.PaginationParamsDto]),
+    __metadata("design:returntype", void 0)
+], EndorserController.prototype, "search", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),

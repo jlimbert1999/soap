@@ -18,12 +18,112 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const schemas_1 = require("../schemas");
 let EndorserService = class EndorserService {
-    constructor(endorsertModel) {
+    constructor(endorsertModel, applicantModel, officerModel) {
         this.endorsertModel = endorsertModel;
+        this.applicantModel = applicantModel;
+        this.officerModel = officerModel;
     }
-    async findAll() {
-        const data = await this.endorsertModel.find({}).populate('organization').sort({ _id: -1 });
-        return { endorsers: data };
+    async findAll({ limit, offset }) {
+        const data = await this.endorsertModel.aggregate().facet({
+            results: [
+                { $skip: offset },
+                { $limit: limit },
+                {
+                    $lookup: {
+                        from: 'funcionarios',
+                        localField: '_id',
+                        foreignField: 'id_representantive',
+                        as: 'officers',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'applicants',
+                        localField: '_id',
+                        foreignField: 'endorsers',
+                        as: 'applicants',
+                    },
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        name: 1,
+                        organization: 1,
+                        officers: { $size: '$officers' },
+                        applicants: { $size: '$applicants' },
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'organizations',
+                        localField: 'organization',
+                        foreignField: '_id',
+                        as: 'organization',
+                    },
+                },
+                {
+                    $unwind: {
+                        path: '$organization',
+                        preserveNullAndEmptyArrays: true,
+                    },
+                },
+            ],
+            length: [{ $count: 'total' }],
+        });
+        const endorsers = data[0].results;
+        const length = data[0].length[0] ? data[0].length[0].total : 0;
+        return { endorsers, length };
+    }
+    async search(term, { limit, offset }) {
+        const regex = RegExp(term, 'i');
+        const data = await this.endorsertModel
+            .aggregate()
+            .lookup({
+            from: 'organizations',
+            localField: 'organization',
+            foreignField: '_id',
+            as: 'organization',
+        })
+            .unwind({
+            path: '$organization',
+            preserveNullAndEmptyArrays: true,
+        })
+            .match({ $or: [{ name: regex }, { 'organization.name': regex }] })
+            .facet({
+            results: [
+                { $skip: offset },
+                { $limit: limit },
+                {
+                    $lookup: {
+                        from: 'funcionarios',
+                        localField: '_id',
+                        foreignField: 'id_representantive',
+                        as: 'officers',
+                    },
+                },
+                {
+                    $lookup: {
+                        from: 'applicants',
+                        localField: '_id',
+                        foreignField: 'endorsers',
+                        as: 'applicants',
+                    },
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        name: 1,
+                        organization: 1,
+                        officers: { $size: '$officers' },
+                        applicants: { $size: '$applicants' },
+                    },
+                },
+            ],
+            length: [{ $count: 'total' }],
+        });
+        const endorsers = data[0].results;
+        const length = data[0].length[0] ? data[0].length[0].total : 0;
+        return { endorsers, length };
     }
     async create(organization) {
         const createOrganization = new this.endorsertModel(organization);
@@ -37,6 +137,10 @@ exports.EndorserService = EndorserService;
 exports.EndorserService = EndorserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(schemas_1.Endorser.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, mongoose_1.InjectModel)(schemas_1.Applicant.name)),
+    __param(2, (0, mongoose_1.InjectModel)(schemas_1.Officer.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model])
 ], EndorserService);
 //# sourceMappingURL=endorser.service.js.map

@@ -5,13 +5,13 @@ import { ApplicantDocuments, ApplicantStatus } from '../interfaces';
 
 @Schema()
 export class Applicant extends Document {
-  @Prop({})
+  @Prop({ type: String, uppercase: true })
   firstname: string;
 
-  @Prop({})
+  @Prop({ type: String, uppercase: true })
   middlename: string;
 
-  @Prop({})
+  @Prop({ type: String, uppercase: true })
   lastname: string;
 
   @Prop({})
