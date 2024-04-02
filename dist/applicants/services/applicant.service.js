@@ -101,6 +101,11 @@ let ApplicantService = class ApplicantService {
         return await this.applicantModel.find({ endorsers: id_endorser });
     }
     async accept(id_applicant, data) {
+        const duplicate = await this.officerModel.findOne({ dni: data.dni });
+        if (duplicate) {
+            const fullname = `${duplicate.nombre} ${duplicate.paterno} ${duplicate.materno}`;
+            throw new common_1.BadRequestException(`El funcionario ${fullname} ya tiene el CI: ${duplicate.dni}`.toUpperCase());
+        }
         const session = await this.connection.startSession();
         try {
             session.startTransaction();
@@ -112,6 +117,7 @@ let ApplicantService = class ApplicantService {
                 dni: applicantDB.dni,
                 telefono: applicantDB.phone,
                 cargo: data.id_job,
+                oldcargo: data.id_job,
                 id_representantive: applicantDB.endorsers.map((el) => el._id),
             });
             await officer.save({ session });

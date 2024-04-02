@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Applicant, Endorser, Officer } from '../schemas';
-import { CreateEndorserDto } from '../dtos/endorser-create.dto';
 import { PaginationParamsDto } from 'src/common/dtos';
+import { UpdateEndorserDto, CreateEndorserDto } from '../dtos';
 
 @Injectable()
 export class EndorserService {
@@ -119,10 +119,29 @@ export class EndorserService {
 
   async create(organization: CreateEndorserDto) {
     const createOrganization = new this.endorsertModel(organization);
-    return (await createOrganization.save()).populate('organization');
+    await createOrganization.save();
+    return await createOrganization.populate('organization');
+  }
+
+  async update(id: string, organization: UpdateEndorserDto) {
+    return await this.endorsertModel.findByIdAndUpdate(id, organization, { new: true }).populate('organization');
   }
 
   async searchAvailable(term: string) {
-    return await this.endorsertModel.find({ name: new RegExp(term, 'i') }).limit(5);
+    const regex = new RegExp(term, 'i');
+    return await this.endorsertModel
+      .aggregate()
+      .lookup({
+        from: 'organizations',
+        localField: 'organization',
+        foreignField: '_id',
+        as: 'organization',
+      })
+      .unwind({
+        path: '$organization',
+        preserveNullAndEmptyArrays: true,
+      })
+      .match({ $or: [{ name: regex }, { 'organization.name': regex }] })
+      .limit(8);
   }
 }

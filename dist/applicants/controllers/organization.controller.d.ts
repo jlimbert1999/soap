@@ -24,17 +24,28 @@
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
 import { OrganizationService } from '../services';
-import { CreateOrganizationDto } from '../dtos';
+import { CreateOrganizationDto, UpdateOrganizationDto } from '../dtos';
+import { PaginationParamsDto } from 'src/common/dtos';
 export declare class OrganizationController {
     private organizationService;
     constructor(organizationService: OrganizationService);
     create(organization: CreateOrganizationDto): Promise<import("mongoose").Document<unknown, {}, import("../schemas").Organization> & import("../schemas").Organization & {
         _id: import("mongoose").Types.ObjectId;
     }>;
-    findAll(): Promise<{
+    findAll(params: PaginationParamsDto): Promise<{
         organizations: (import("mongoose").Document<unknown, {}, import("../schemas").Organization> & import("../schemas").Organization & {
             _id: import("mongoose").Types.ObjectId;
         })[];
+        length: number;
+    }>;
+    search(term: string, params: PaginationParamsDto): Promise<{
+        organizations: (import("mongoose").Document<unknown, {}, import("../schemas").Organization> & import("../schemas").Organization & {
+            _id: import("mongoose").Types.ObjectId;
+        })[];
+        length: number;
+    }>;
+    update(id: string, organization: UpdateOrganizationDto): Promise<import("mongoose").Document<unknown, {}, import("../schemas").Organization> & import("../schemas").Organization & {
+        _id: import("mongoose").Types.ObjectId;
     }>;
     searchAvailable(term: string): Promise<(import("mongoose").Document<unknown, {}, import("../schemas").Organization> & import("../schemas").Organization & {
         _id: import("mongoose").Types.ObjectId;

@@ -127,10 +127,28 @@ let EndorserService = class EndorserService {
     }
     async create(organization) {
         const createOrganization = new this.endorsertModel(organization);
-        return (await createOrganization.save()).populate('organization');
+        await createOrganization.save();
+        return await createOrganization.populate('organization');
+    }
+    async update(id, organization) {
+        return await this.endorsertModel.findByIdAndUpdate(id, organization, { new: true }).populate('organization');
     }
     async searchAvailable(term) {
-        return await this.endorsertModel.find({ name: new RegExp(term, 'i') }).limit(5);
+        const regex = new RegExp(term, 'i');
+        return await this.endorsertModel
+            .aggregate()
+            .lookup({
+            from: 'organizations',
+            localField: 'organization',
+            foreignField: '_id',
+            as: 'organization',
+        })
+            .unwind({
+            path: '$organization',
+            preserveNullAndEmptyArrays: true,
+        })
+            .match({ $or: [{ name: regex }, { 'organization.name': regex }] })
+            .limit(8);
     }
 };
 exports.EndorserService = EndorserService;

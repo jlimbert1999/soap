@@ -87,14 +87,29 @@ export class Officer extends Document {
   })
   cargo: Job;
 
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Job.name,
+  })
+  oldcargo: Job;
+
   @Prop({ type: Date })
   fecha_nac: Date;
 
-  @Prop({ type: Date })
+  @Prop({ type: Date, default: Date.now })
   fecha_ingreso: Date;
 
   @Prop({ type: Date })
   fecha_salida: Date;
+
+  @Prop({ type: Boolean, default: true })
+  activo: boolean;
+
+  @Prop({ type: Boolean, default: true })
+  cuenta: boolean;
+
+  @Prop({ type: Boolean, default: true })
+  status: boolean;
 }
 
 export const OfficerSchema = SchemaFactory.createForClass(Officer);

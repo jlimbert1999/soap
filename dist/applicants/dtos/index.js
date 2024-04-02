@@ -15,7 +15,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./organization-create.dto"), exports);
+__exportStar(require("./organization-update.dto"), exports);
 __exportStar(require("./endorser-create.dto"), exports);
+__exportStar(require("./endorser-update.dto"), exports);
 __exportStar(require("./officer-create.dto"), exports);
 __exportStar(require("./officers/officer-update.dto"), exports);
 __exportStar(require("./applicant-create.dto"), exports);

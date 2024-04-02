@@ -24,17 +24,28 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { Organization } from '../schemas';
 import { Model } from 'mongoose';
-import { CreateOrganizationDto } from '../dtos';
+import { CreateOrganizationDto, UpdateOrganizationDto } from '../dtos';
+import { PaginationParamsDto } from 'src/common/dtos';
 export declare class OrganizationService {
     private organizationModel;
     constructor(organizationModel: Model<Organization>);
     create(organization: CreateOrganizationDto): Promise<import("mongoose").Document<unknown, {}, Organization> & Organization & {
         _id: import("mongoose").Types.ObjectId;
     }>;
-    findAll(): Promise<{
+    update(id: string, organization: UpdateOrganizationDto): Promise<import("mongoose").Document<unknown, {}, Organization> & Organization & {
+        _id: import("mongoose").Types.ObjectId;
+    }>;
+    findAll({ limit, offset }: PaginationParamsDto): Promise<{
         organizations: (import("mongoose").Document<unknown, {}, Organization> & Organization & {
             _id: import("mongoose").Types.ObjectId;
         })[];
+        length: number;
+    }>;
+    search(term: string, { limit, offset }: PaginationParamsDto): Promise<{
+        organizations: (import("mongoose").Document<unknown, {}, Organization> & Organization & {
+            _id: import("mongoose").Types.ObjectId;
+        })[];
+        length: number;
     }>;
     searchAvailable(term: string): Promise<(import("mongoose").Document<unknown, {}, Organization> & Organization & {
         _id: import("mongoose").Types.ObjectId;

@@ -24,8 +24,8 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { Model } from 'mongoose';
 import { Applicant, Endorser, Officer } from '../schemas';
-import { CreateEndorserDto } from '../dtos/endorser-create.dto';
 import { PaginationParamsDto } from 'src/common/dtos';
+import { UpdateEndorserDto, CreateEndorserDto } from '../dtos';
 export declare class EndorserService {
     private endorsertModel;
     private applicantModel;
@@ -42,7 +42,8 @@ export declare class EndorserService {
     create(organization: CreateEndorserDto): Promise<Omit<import("mongoose").Document<unknown, {}, Endorser> & Endorser & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    searchAvailable(term: string): Promise<(import("mongoose").Document<unknown, {}, Endorser> & Endorser & {
+    update(id: string, organization: UpdateEndorserDto): Promise<import("mongoose").Document<unknown, {}, Endorser> & Endorser & {
         _id: import("mongoose").Types.ObjectId;
-    })[]>;
+    }>;
+    searchAvailable(term: string): Promise<any[]>;
 }

@@ -49,17 +49,36 @@ __decorate([
     __metadata("design:type", job_schema_1.Job)
 ], Officer.prototype, "cargo", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({
+        type: mongoose_2.default.Schema.Types.ObjectId,
+        ref: job_schema_1.Job.name,
+    }),
+    __metadata("design:type", job_schema_1.Job)
+], Officer.prototype, "oldcargo", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ type: Date }),
     __metadata("design:type", Date)
 ], Officer.prototype, "fecha_nac", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: Date }),
+    (0, mongoose_1.Prop)({ type: Date, default: Date.now }),
     __metadata("design:type", Date)
 ], Officer.prototype, "fecha_ingreso", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: Date }),
     __metadata("design:type", Date)
 ], Officer.prototype, "fecha_salida", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: Boolean, default: true }),
+    __metadata("design:type", Boolean)
+], Officer.prototype, "activo", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: Boolean, default: true }),
+    __metadata("design:type", Boolean)
+], Officer.prototype, "cuenta", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: Boolean, default: true }),
+    __metadata("design:type", Boolean)
+], Officer.prototype, "status", void 0);
 exports.Officer = Officer = __decorate([
     (0, mongoose_1.Schema)({ collection: 'funcionarios' })
 ], Officer);

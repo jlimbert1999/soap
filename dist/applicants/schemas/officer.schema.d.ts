@@ -33,9 +33,13 @@ export declare class Officer extends Document {
     telefono: string;
     id_representantive: Endorser[];
     cargo: Job;
+    oldcargo: Job;
     fecha_nac: Date;
     fecha_ingreso: Date;
     fecha_salida: Date;
+    activo: boolean;
+    cuenta: boolean;
+    status: boolean;
 }
 export declare const OfficerSchema: mongoose.Schema<Officer, mongoose.Model<Officer, any, any, any, mongoose.Document<unknown, any, Officer> & Officer & {
     _id: mongoose.Types.ObjectId;

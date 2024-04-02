@@ -7,4 +7,7 @@ export class CreateOfficer {
   @IsString()
   @IsNotEmpty()
   name: string;
+
+  @IsNotEmpty()
+  dni: string;
 }

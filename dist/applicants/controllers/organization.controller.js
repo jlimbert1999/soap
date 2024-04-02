@@ -16,6 +16,7 @@ exports.OrganizationController = void 0;
 const common_1 = require("@nestjs/common");
 const services_1 = require("../services");
 const dtos_1 = require("../dtos");
+const dtos_2 = require("../../common/dtos");
 let OrganizationController = class OrganizationController {
     constructor(organizationService) {
         this.organizationService = organizationService;
@@ -23,8 +24,14 @@ let OrganizationController = class OrganizationController {
     create(organization) {
         return this.organizationService.create(organization);
     }
-    findAll() {
-        return this.organizationService.findAll();
+    findAll(params) {
+        return this.organizationService.findAll(params);
+    }
+    search(term, params) {
+        return this.organizationService.search(term, params);
+    }
+    update(id, organization) {
+        return this.organizationService.update(id, organization);
     }
     searchAvailable(term) {
         return this.organizationService.searchAvailable(term);
@@ -40,10 +47,27 @@ __decorate([
 ], OrganizationController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [dtos_2.PaginationParamsDto]),
     __metadata("design:returntype", void 0)
 ], OrganizationController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('search/:term'),
+    __param(0, (0, common_1.Param)('term')),
+    __param(1, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, dtos_2.PaginationParamsDto]),
+    __metadata("design:returntype", void 0)
+], OrganizationController.prototype, "search", null);
+__decorate([
+    (0, common_1.Put)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, dtos_1.UpdateOrganizationDto]),
+    __metadata("design:returntype", void 0)
+], OrganizationController.prototype, "update", null);
 __decorate([
     (0, common_1.Get)('available/:term'),
     __param(0, (0, common_1.Param)('term')),

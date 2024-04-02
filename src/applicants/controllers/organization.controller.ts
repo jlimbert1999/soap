@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { OrganizationService } from '../services';
-import { CreateOrganizationDto } from '../dtos';
+import { CreateOrganizationDto, UpdateOrganizationDto } from '../dtos';
+import { PaginationParamsDto } from 'src/common/dtos';
 
 @Controller('organizations')
 export class OrganizationController {
@@ -12,8 +13,18 @@ export class OrganizationController {
   }
 
   @Get()
-  findAll() {
-    return this.organizationService.findAll();
+  findAll(@Query() params: PaginationParamsDto) {
+    return this.organizationService.findAll(params);
+  }
+
+  @Get('search/:term')
+  search(@Param('term') term: string, @Query() params: PaginationParamsDto) {
+    return this.organizationService.search(term, params);
+  }
+
+  @Put('/:id')
+  update(@Param('id') id: string, @Body() organization: UpdateOrganizationDto) {
+    return this.organizationService.update(id, organization);
   }
 
   @Get('available/:term')

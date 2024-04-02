@@ -14,9 +14,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EndorserController = void 0;
 const common_1 = require("@nestjs/common");
-const endorser_create_dto_1 = require("../dtos/endorser-create.dto");
 const services_1 = require("../services");
 const dtos_1 = require("../../common/dtos");
+const dtos_2 = require("../dtos");
 let EndorserController = class EndorserController {
     constructor(endorserService) {
         this.endorserService = endorserService;
@@ -29,6 +29,9 @@ let EndorserController = class EndorserController {
     }
     create(organization) {
         return this.endorserService.create(organization);
+    }
+    update(id, organization) {
+        return this.endorserService.update(id, organization);
     }
     searchAvailable(term) {
         return this.endorserService.searchAvailable(term);
@@ -54,9 +57,17 @@ __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [endorser_create_dto_1.CreateEndorserDto]),
+    __metadata("design:paramtypes", [dtos_2.CreateEndorserDto]),
     __metadata("design:returntype", void 0)
 ], EndorserController.prototype, "create", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, dtos_2.UpdateEndorserDto]),
+    __metadata("design:returntype", void 0)
+], EndorserController.prototype, "update", null);
 __decorate([
     (0, common_1.Get)('available/:term'),
     __param(0, (0, common_1.Param)('term')),

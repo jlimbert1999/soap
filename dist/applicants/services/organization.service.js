@@ -25,9 +25,26 @@ let OrganizationService = class OrganizationService {
         const createOrganization = new this.organizationModel(organization);
         return await createOrganization.save();
     }
-    async findAll() {
-        const organizations = await this.organizationModel.find({}).sort({ _id: -1 });
-        return { organizations };
+    async update(id, organization) {
+        return await this.organizationModel.findByIdAndUpdate(id, organization, { new: true });
+    }
+    async findAll({ limit, offset }) {
+        const [organizations, length] = await Promise.all([
+            this.organizationModel.find({}).skip(offset).limit(limit).sort({ _id: -1 }),
+            this.organizationModel.countDocuments(),
+        ]);
+        return { organizations, length };
+    }
+    async search(term, { limit, offset }) {
+        const [organizations, length] = await Promise.all([
+            this.organizationModel
+                .find({ name: RegExp(term, 'i') })
+                .skip(offset)
+                .limit(limit)
+                .sort({ _id: -1 }),
+            this.organizationModel.countDocuments({ name: RegExp(term, 'i') }),
+        ]);
+        return { organizations, length };
     }
     async searchAvailable(term) {
         return await this.organizationModel.find({ name: new RegExp(term, 'i') }).limit(5);

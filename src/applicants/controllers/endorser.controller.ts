@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
-import { CreateEndorserDto } from '../dtos/endorser-create.dto';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { EndorserService } from '../services';
 import { PaginationParamsDto } from 'src/common/dtos';
+import { UpdateEndorserDto, CreateEndorserDto } from '../dtos';
 
 @Controller('endorsers')
 export class EndorserController {
@@ -20,6 +20,11 @@ export class EndorserController {
   @Post()
   create(@Body() organization: CreateEndorserDto) {
     return this.endorserService.create(organization);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() organization: UpdateEndorserDto) {
+    return this.endorserService.update(id, organization);
   }
 
   @Get('available/:term')

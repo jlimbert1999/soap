@@ -1,5 +1,9 @@
 export * from './organization-create.dto';
+export * from './organization-update.dto';
+
 export * from './endorser-create.dto';
+export * from './endorser-update.dto';
+
 export * from './officer-create.dto';
 export * from './officers/officer-update.dto';
 

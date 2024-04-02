@@ -23,9 +23,9 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose" />
 /// <reference types="mongoose/types/inferschematype" />
-import { CreateEndorserDto } from '../dtos/endorser-create.dto';
 import { EndorserService } from '../services';
 import { PaginationParamsDto } from 'src/common/dtos';
+import { UpdateEndorserDto, CreateEndorserDto } from '../dtos';
 export declare class EndorserController {
     private endorserService;
     constructor(endorserService: EndorserService);
@@ -40,7 +40,8 @@ export declare class EndorserController {
     create(organization: CreateEndorserDto): Promise<Omit<import("mongoose").Document<unknown, {}, import("../schemas").Endorser> & import("../schemas").Endorser & {
         _id: import("mongoose").Types.ObjectId;
     }, never>>;
-    searchAvailable(term: string): Promise<(import("mongoose").Document<unknown, {}, import("../schemas").Endorser> & import("../schemas").Endorser & {
+    update(id: string, organization: UpdateEndorserDto): Promise<import("mongoose").Document<unknown, {}, import("../schemas").Endorser> & import("../schemas").Endorser & {
         _id: import("mongoose").Types.ObjectId;
-    })[]>;
+    }>;
+    searchAvailable(term: string): Promise<any[]>;
 }
